@@ -179,23 +179,30 @@ function makeHrefsRelative(document) {
   });
 }
 
-function makeUrlRelative(originalSrc) {
+function makeUrlRelative(originalSrc, org, site) {
   try {
     const url = new URL(originalSrc);
+    if (org && site) {
+      if (url.hostname.startsWith(`main--${site}--${org}`)) {
+        return `.${url.pathname}${url.search}${url.hash}`;
+      } else {
+        return null;
+      }
+    }
     return `.${url.pathname}${url.search}${url.hash}`;
   } catch (e) {
     return null;
   }
 }
 
-function makeImagesRelative(document) {
+function makeImagesRelative(document, org, site) {
   const els = document.querySelectorAll('img[src*="media_"], source[srcset*="media_"]');
   els.forEach((el) => {
     if (el.nodeName === 'IMG') {
-      const relativeSrc = makeUrlRelative(el.src);
+      const relativeSrc = makeUrlRelative(el.src, org, site);
       if (relativeSrc) el.setAttribute('src', relativeSrc);
     } else {
-      const relativeSrc = makeUrlRelative(el.srcset);
+      const relativeSrc = makeUrlRelative(el.srcset, org, site);
       if (relativeSrc) el.setAttribute('srcset', relativeSrc);
     }
   });
@@ -208,11 +215,11 @@ function makeIconSpans(html) {
   return html.replace(iconRegex, (_, iconName) => `<span class="icon icon-${iconName}"></span>`);
 }
 
-const addDntInfoToHtml = (html) => {
+const addDntInfoToHtml = (html, org, site) => {
   const parser = new DOMParser();
   const document = parser.parseFromString(html, 'text/html');
 
-  makeImagesRelative(document);
+  makeImagesRelative(document, org, site);
   makeHrefsRelative(document);
 
   // Match existing content sent to GLaaS
@@ -292,7 +299,7 @@ export async function removeDnt(html, org, repo, { fileType = 'html' } = {}) {
   return document.documentElement.outerHTML;
 }
 
-export async function addDnt(inputText, config, { fileType = 'html', reset = false } = {}) {
+export async function addDnt(inputText, config, { fileType = 'html', reset = false, org, site } = {}) {
   let html;
   const dntConfig = parseDntConfig(config, reset);
 
@@ -305,5 +312,5 @@ export async function addDnt(inputText, config, { fileType = 'html', reset = fal
   if (fileType === 'html') {
     html = makeIconSpans(inputText);
   }
-  return addDntInfoToHtml(html);
+  return addDntInfoToHtml(html, org, site);
 }

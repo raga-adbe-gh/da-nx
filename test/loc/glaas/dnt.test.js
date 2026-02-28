@@ -39,9 +39,12 @@ describe('Glaas DNT', () => {
     <div>
       <img src="https://main--da-bacom--adobecom.aem.live/media_14a4b58fd73d82e553ccb65d5f53c3f5ff552330d.jpeg?optimize=medium" alt="https://a.com | Text here | :play:" loading="lazy" />
     </div>
+    <div>
+      <img src="https://main--milo--adobecom.aem.live/media_164cffa8fd2b5e7afd2d7036f4725604a2381aa91.jpeg?optimize=medium" alt="https://a.com | Text here | :play:" loading="lazy" />
+    </div>
   </main>
 </body>`;
-    const htmlWithDnt = await addDnt(html, config, { reset: true });
+    const htmlWithDnt = await addDnt(html, config, { reset: true, org: 'adobecom', site: 'da-bacom' });
     console.log(htmlWithDnt);
     expect(htmlWithDnt).to.equal(
       `<html><head></head><body>
@@ -52,6 +55,9 @@ describe('Glaas DNT', () => {
     </div>
     <div>
       <img src="./media_14a4b58fd73d82e553ccb65d5f53c3f5ff552330d.jpeg?optimize=medium" alt="Text here" loading="lazy" dnt-alt-content="https://a.com | *alt-placeholder* | :play:">
+    </div>
+    <div>
+      <img src="https://main--milo--adobecom.aem.live/media_164cffa8fd2b5e7afd2d7036f4725604a2381aa91.jpeg?optimize=medium" alt="Text here" loading="lazy" dnt-alt-content="https://a.com | *alt-placeholder* | :play:">
     </div>
   </main>
 </body></html>`,
@@ -67,6 +73,9 @@ describe('Glaas DNT', () => {
     </div>
     <div>
       <img src="https://main--da-bacom--adobecom.aem.live/media_14a4b58fd73d82e553ccb65d5f53c3f5ff552330d.jpeg?optimize=medium" alt="https://a.com | Text here | :play:" loading="lazy">
+    </div>
+    <div>
+      <img src="https://main--milo--adobecom.aem.live/media_164cffa8fd2b5e7afd2d7036f4725604a2381aa91.jpeg?optimize=medium" alt="https://a.com | Text here | :play:" loading="lazy">
     </div>
   </main>
 </body></html>`,

@@ -70,7 +70,7 @@ export async function getUrls(
       url.content = content;
       if (connector) {
         try {
-          url.content = await connector.dnt.addDnt(content, config, { fileType });
+          url.content = await connector.dnt.addDnt(content, config, { fileType, org, site });
         } catch (error) {
           url.error = `Error adding DNT to ${url.daBasePath} - ${error.message}`;
         }
